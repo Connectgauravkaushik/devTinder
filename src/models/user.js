@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true, // make sure this field is mandatory.
       unique: true,
+      minlength:4,
+      maxlength:50
     },
     lastName: {
       type: String,

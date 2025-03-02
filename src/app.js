@@ -2,21 +2,59 @@ const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express(); // instance of express js application
+const bcrypt = require("bcrypt")// bcrypt to encrypt the pswrd
 app.use(express.json()); //Middleware Convert JSON into js object.
+
+const { validateSignUpData } = require("./utils/validation")
+
+
 
 // SignUp API for a new user
 app.post("/signup", async (req, res) => {
+
+  // - Encrypt the password
+  const { firstName, lastName, emailId, password } = req.body;
+  const passwordHash = await bcrypt.hash(password, 10)
+
   // To add the new signup user , create need to create a new instance form the user model.
-  // creating a new user instance of the model with the above data.
-  const user = new User(req.body);
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password: passwordHash
+  });   // creating a new user instance of the model with the above data.
+
   try {
-    // return a promise and save the data in the database / collection
-    await user.save();
+    validateSignUpData(req)  // Validation of data 
+    await user.save(); // return a promise and save the data in the database / collection
     res.send("user added successfully!!");
+
   } catch (error) {
     res.status(400).send("Error saving the user : " + error.message);
   }
 });
+
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId: emailId });
+
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      res.send("User logged in successfully");
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+  } catch (error) {
+    res.status(400).send("Error saving the user : " + error.message);
+  }
+})
 
 // Get user by email
 app.get("/user", async (req, res) => {
@@ -33,6 +71,7 @@ app.get("/user", async (req, res) => {
   }
 });
 
+
 //Feed API - get all the users from the database
 app.get("/feed", async (req, res) => {
   try {
@@ -43,6 +82,8 @@ app.get("/feed", async (req, res) => {
     res.status(400).send("Somewthing went wrong!");
   }
 });
+
+
 
 //deleting a user form the database using _id
 app.delete("/user", async (req, res) => {
@@ -56,6 +97,8 @@ app.delete("/user", async (req, res) => {
     res.status(400).send("Somewthing went wrong!");
   }
 });
+
+
 
 //Updating the data in the database
 app.patch("/user/:userId", async (req, res) => {
@@ -101,6 +144,9 @@ app.patch("/user/:userId", async (req, res) => {
     res.status(400).send("Update failed: " + error.message);
   }
 });
+
+
+
 
 // listening the request on this port number
 connectDB()
