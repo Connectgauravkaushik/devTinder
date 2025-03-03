@@ -3,11 +3,12 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const app = express(); // instance of express js application
 const bcrypt = require("bcrypt")// bcrypt to encrypt the pswrd
-app.use(express.json()); //Middleware Convert JSON into js object.
-
 const { validateSignUpData } = require("./utils/validation")
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
-
+app.use(cookieParser())
+app.use(express.json()); //Middleware Convert JSON into js object.
 
 // SignUp API for a new user
 app.post("/signup", async (req, res) => {
@@ -47,16 +48,50 @@ app.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
+      // Hiding the user ID after authentication and a SECRET KEY
+      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$79g=G") // create a JWT TOKEN
+      res.cookie('token', token);
       res.send("User logged in successfully");
+
     } else {
       throw new Error("Invalid Credentials");
     }
   } catch (error) {
     res.status(400).send("Error saving the user : " + error.message);
   }
-})
+});
 
-// Get user by email
+// PROFILE API WITH COOKIE AUTH 
+app.get('/profile', async (req, res) => {
+
+try {
+  const cookies = req.cookies; // authenticate using the cookie 
+  const { token } = cookies;
+  if(!token){
+    throw new Error("Invalid Token");
+  }
+  //validate the token , before showing the profile or giving the access of profile.
+  const decodedMessage =  await jwt.verify(token , "DEV@TINDER$79g=G")
+  const { _id } = decodedMessage; 
+
+  console.log("Logged in User id is : "+_id);
+  const user  = await User.findById(_id); // GEETING THE USER BY ID FROM DB
+  
+  if(!user){
+    throw new Error("please login again , user not exist !");
+  }
+
+  res.status(400).send(user);
+} catch (error) {
+  res.status(400).send("Somewthing went wrong!" + error.message);
+}
+
+
+});
+
+
+
+// GET USERS BY EMAIL , ONLY FIRST USER WILL BE RETURNED !
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
   try {
