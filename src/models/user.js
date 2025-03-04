@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt")// bcrypt to encrypt the pswrd
+const jwt = require('jsonwebtoken');
 
 //simply use this to create schema
 // we will add some strict checks for field validations
@@ -73,6 +75,21 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+//HELPER METHOD
+userSchema.methods.getJWT = async function(){
+  const user = this; // referencing to the current instance or user / using this;
+  const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$79g=G" ,{expiresIn : "1d"}); // creating a JWT TOKEN
+  return token;
+}
+
+userSchema.methods.validatePassword = async function(passwordInputByUser){
+   const user = this;
+   const passwordHash = user.password;
+   const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash);
+
+   return isPasswordValid;
+} 
 
 //Now we create a mongoose model , model is a class create it's own instances when a new user comes
 // this model help in creating the new users.
