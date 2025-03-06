@@ -30,12 +30,26 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
         //
         const loggedInUser = req.user;
         const connectionRequests = await ConnectionRequest.find({
+
             $or: [
                 { toUserId: loggedInUser._id, status: 'accepted' },
                 { fromUserId: loggedInUser._id, status: 'accepted' },
             ],
-        }).populate('fromUserId', ['firstName', 'lastName', "photoUrl", 'age', 'gender', 'about', 'skills']);
-        const data = connectionRequests.map((row) => row.fromUserId);
+        
+        }).populate('fromUserId', ['firstName', 'lastName', "photoUrl", 'age', 'gender', 'about', 'skills'])
+            .populate('toUserId', ['firstName', 'lastName', "photoUrl", 'age', 'gender', 'about', 'skills']);
+        
+        // checking if the login user is equal to the user id who has send the request.
+            const data = connectionRequests.map((row) => {
+                //to string will check the strings of id's 
+               if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
+                  return row.toUserId ;
+               }
+               return row.fromUserId ;
+            }
+        );
+        
+        
         res.json({ data: data });
 
     } catch (error) {
