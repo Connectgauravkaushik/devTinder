@@ -11,12 +11,12 @@ app.use(express.json()); //Middleware Convert JSON into js object.
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
-
+const userRouter = require("./routes/user");
 // It checks for all the routes and controllers
 app.use("/" ,authRouter); 
 app.use("/" ,profileRouter);
 app.use("/" ,requestRouter);
-
+app.use("/" ,userRouter);
 
 // listening the request on this port number
 connectDB()
