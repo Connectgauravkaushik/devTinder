@@ -16,8 +16,8 @@ const userAuth = async (req, res, next) => {
     if (!user) {
       throw new Error("please login again , user not exist !");
     }
-    req.user = user;
-    next();
+    req.user = user; // logged in user 
+    next(); // It will go the callback fun and give you the response back like the user .
   } catch (error) {
     res.status(400).send(error.message);
   }
