@@ -2,8 +2,12 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express(); // instance of express js application
 const cookieParser = require("cookie-parser");
+const cors = require('cors');
 
-
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true
+}));
 app.use(cookieParser()); // make sure we get thje cookies in object , otherwise it will show undefined 
 app.use(express.json()); //Middleware Convert JSON into js object.
 
