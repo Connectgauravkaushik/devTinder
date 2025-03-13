@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies; // authenticate using the cookie 
     if(!token){
-        throw new Error("Token is not valid !!")
+       return res.status(401).send('Please Login !!'); //401 means unauthorized
     }
     //validate the token , before showing the profile or giving the access of profile.
     const decodedObj = await jwt.verify(token, "DEV@TINDER$79g=G");

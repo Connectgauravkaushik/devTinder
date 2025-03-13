@@ -20,8 +20,13 @@ authRouter.post("/signup", async (req, res) => {
 
   try {
     validateSignUpData(req); // Validation of data
-    await user.save(); // return a promise and save the data in the database / collection
-    res.send("user added successfully!!");
+    const savedUser = await user.save(); // return a promise and save the data in the database / collection
+    const token = await savedUser.getJWT(); // offloads to the schmea for getting the token
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    
+    res.json({message : "User Added Successfully" , data : savedUser});
   } catch (error) {
     res.status(400).send("Error saving the user : " + error.message);
   }

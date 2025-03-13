@@ -6,8 +6,12 @@ const cors = require('cors');
 
 app.use(cors({
   origin:"http://localhost:5173",
-  credentials:true
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // Allow PATCH method
+  credentials:true,
+  
 }));
+app.options('*', cors());
+
 app.use(cookieParser()); // make sure we get thje cookies in object , otherwise it will show undefined 
 app.use(express.json()); //Middleware Convert JSON into js object.
 
