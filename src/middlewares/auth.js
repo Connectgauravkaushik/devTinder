@@ -9,7 +9,7 @@ const userAuth = async (req, res, next) => {
        return res.status(401).send('Please Login !!'); //401 means unauthorized
     }
     //validate the token , before showing the profile or giving the access of profile.
-    const decodedObj = await jwt.verify(token, "DEV@TINDER$79g=G");
+    const decodedObj = await jwt.verify(token, process.env.JWT_SECRET_KEY);
     const { _id } = decodedObj;
 
     const user = await User.findById(_id); // GEETING THE USER BY ID FROM DB
