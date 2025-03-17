@@ -3,7 +3,9 @@ const connectDB = require("./config/database");
 const app = express(); // instance of express js application
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
+
+require('./utils/cronJob');
 
 app.use(cors({
   origin:"http://localhost:5173",
@@ -21,12 +23,14 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const paymentRouter = require("./routes/payment");
 
 // It checks for all the routes and controllers
 app.use("/" ,authRouter); 
 app.use("/" ,profileRouter);
 app.use("/" ,requestRouter);
 app.use("/" ,userRouter);
+app.use("/" ,paymentRouter);
 
 // listening the request on this port number
 connectDB()
