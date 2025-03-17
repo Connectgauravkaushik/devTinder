@@ -52,22 +52,21 @@ const userSchema = new mongoose.Schema(
         values: ["male", "female", "other"],
         message: "${Value} is incorrect status type",
       },
-
-      isPremium: {
-        type: Boolean,
-        default: false,
-      },
-
-      membershipType: {
-        type: String,
-
-      }
       //validation in build
       // validate(value) {
       //   if (!["male", "female", "other"].includes(value)) {
       //     throw new Error("Gender data is not valid");
       //   }
       // },
+    },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+
+    membershipType: {
+      type: String,
+
     },
     photoUrl: {
       type: String,
