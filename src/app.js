@@ -3,6 +3,9 @@ const connectDB = require("./config/database");
 const app = express(); // instance of express js application
 const cookieParser = require("cookie-parser");
 const cors = require('cors');
+const http = require('http');
+const initializeSocket = require("./utils/socket");
+
 require('dotenv').config();
 
 require('./utils/cronJob');
@@ -32,11 +35,18 @@ app.use("/" ,requestRouter);
 app.use("/" ,userRouter);
 app.use("/" ,paymentRouter);
 
+
+// Creating a serer using HTTP
+const server = http.createServer(app); // here app is existing express application 
+initializeSocket(server);
+
+ 
+
 // listening the request on this port number
 connectDB()
   .then(() => {
     console.log("Database connected successfully");
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("server is running");
     });
   })
