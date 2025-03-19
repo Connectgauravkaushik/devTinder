@@ -11,9 +11,9 @@ require('dotenv').config();
 require('./utils/cronJob');
 
 app.use(cors({
-  origin:"http://localhost:5173",
+  origin: "http://localhost:5173",
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], // Allow PATCH method
-  credentials:true,
+  credentials: true,
 
 }));
 app.options('*', cors());
@@ -27,20 +27,23 @@ const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 const paymentRouter = require("./routes/payment");
+const chatRouter = require("./routes/chat");
+
 
 // It checks for all the routes and controllers
-app.use("/" ,authRouter); 
-app.use("/" ,profileRouter);
-app.use("/" ,requestRouter);
-app.use("/" ,userRouter);
-app.use("/" ,paymentRouter);
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);
+app.use("/", paymentRouter);
+app.use('/', chatRouter);
 
 
 // Creating a serer using HTTP
 const server = http.createServer(app); // here app is existing express application 
 initializeSocket(server);
 
- 
+
 
 // listening the request on this port number
 connectDB()
@@ -55,4 +58,3 @@ connectDB()
   });
 
 
-  
