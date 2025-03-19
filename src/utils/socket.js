@@ -1,7 +1,7 @@
 const socket = require("socket.io");
 const crypto = require("crypto");
 const { Chat } = require("../models/chat");
-const ConnectionRequest = require("../models/connectionRequests");
+// const ConnectionRequest = require("../models/connectionRequests");
 
 const getSecretRoomId = (userId, targetUserId) => {
     // Sort the array of IDs before stringifying it
